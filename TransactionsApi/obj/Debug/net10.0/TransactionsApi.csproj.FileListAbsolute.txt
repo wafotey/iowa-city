@@ -31,3 +31,4 @@
 /Users/williamsbotchway/Desktop/iowa-city/TransactionsApi/obj/Debug/net10.0/TransactionsApi.pdb
 /Users/williamsbotchway/Desktop/iowa-city/TransactionsApi/obj/Debug/net10.0/TransactionsApi.genruntimeconfig.cache
 /Users/williamsbotchway/Desktop/iowa-city/TransactionsApi/obj/Debug/net10.0/ref/TransactionsApi.dll
+/Users/williamsbotchway/Desktop/iowa-city/TransactionsApi/obj/Debug/net10.0/TransactionsApi.sourcelink.json

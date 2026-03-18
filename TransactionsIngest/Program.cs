@@ -3,11 +3,13 @@ using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TransactionsIngest;
+using TransactionsIngest.Application.Helpers;
 using TransactionsIngest.Commands.ReconcileTransactions;
 using TransactionsIngest.Data;
 using TransactionsIngest.Data.Interceptors;
 using TransactionsIngest.Helpers;
 using TransactionsIngest.Repositories;
+using TransactionsIngest.Services;
 
 var builder = Host.CreateApplicationBuilder(args);
 var ingestSection = builder.Configuration.GetSection(IngestOptions.SectionName);
@@ -25,11 +27,12 @@ builder.Services.AddDbContext<IngestDbContext>((sp, o) =>
 });
 
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
-builder.Services.AddSingleton<ICommand, IngestCommand>();
+builder.Services.AddHttpClient<ITransactionFeed, HttpTransactionFeed>();
+builder.Services.AddScoped<IngestService>();
 builder.Services.AddSingleton<ICommand, ReconcileCommand>();
-builder.Services.AddScoped<ICommandHandler<IngestCommand>, IngestCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<ReconcileCommand>, ReconcileCommandHandler>();
 builder.Services.AddSingleton<CommandDispatcher>();
+builder.Services.AddHostedService<HourlyBackgroundService>();
 
 var host = builder.Build();
 
@@ -37,12 +40,18 @@ using (var scope = host.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<IngestDbContext>();
     await dbContext.Database.EnsureCreatedAsync();
-
-    var dispatcher = scope.ServiceProvider.GetRequiredService<CommandDispatcher>();
-    await dispatcher.RouteAsync(args);
 }
 
-await host.StopAsync();
+if (args.Length > 0)
+{
+    using var scope = host.Services.CreateScope();
+    var dispatcher = scope.ServiceProvider.GetRequiredService<CommandDispatcher>();
+    await dispatcher.ExecuteAsync(args[0]);
+    await host.StopAsync();
+    return;
+}
+
+await host.RunAsync();
 
 static string FindProjectDirectory()
 {
