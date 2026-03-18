@@ -224,3 +224,5 @@
 /Users/williamsbotchway/Desktop/iowa-city/TransactionsIngest/obj/Debug/net10.0/TransactionsIngest.pdb
 /Users/williamsbotchway/Desktop/iowa-city/TransactionsIngest/obj/Debug/net10.0/TransactionsIngest.genruntimeconfig.cache
 /Users/williamsbotchway/Desktop/iowa-city/TransactionsIngest/obj/Debug/net10.0/ref/TransactionsIngest.dll
+/Users/williamsbotchway/Desktop/iowa-city/TransactionsIngest/bin/Debug/net10.0/Autofac.dll
+/Users/williamsbotchway/Desktop/iowa-city/TransactionsIngest/bin/Debug/net10.0/Autofac.Extensions.DependencyInjection.dll

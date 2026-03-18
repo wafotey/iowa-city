@@ -2,9 +2,6 @@ using Microsoft.Extensions.DependencyInjection;
 using TransactionsIngest.Application.Helpers;
 
 namespace TransactionsIngest.Helpers;
-
-
-
 public sealed class CommandDispatcher
 {
     private readonly IServiceProvider _serviceProvider;

@@ -7,7 +7,7 @@ namespace TransactionsIngest.Services;
 
 public sealed class HourlyBackgroundService : BackgroundService
 {
-    private static readonly TimeSpan ExecutionInterval = TimeSpan.FromHours(1);
+    private static readonly TimeSpan ExecutionInterval = TimeSpan.FromMinutes(1);// TimeSpan.FromHours(1);
     private const string ReconcileCommandName = "ReconcileCommand";
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<HourlyBackgroundService> _logger;

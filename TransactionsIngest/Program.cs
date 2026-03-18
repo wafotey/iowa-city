@@ -1,8 +1,11 @@
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TransactionsIngest;
+using TransactionsIngest.Application.Decorators;
 using TransactionsIngest.Application.Helpers;
 using TransactionsIngest.Commands.ReconcileTransactions;
 using TransactionsIngest.Data;
@@ -11,30 +14,53 @@ using TransactionsIngest.Helpers;
 using TransactionsIngest.Repositories;
 using TransactionsIngest.Services;
 
-var builder = Host.CreateApplicationBuilder(args);
-var ingestSection = builder.Configuration.GetSection(IngestOptions.SectionName);
-var configuredConnectionString = ingestSection["ConnectionString"] ?? "Data Source=ingest.db";
-var projectDirectory = FindProjectDirectory();
-var databaseDirectory = Path.Combine(projectDirectory, "Infastructure", "database");
-var connectionString = NormalizeSqliteConnectionString(configuredConnectionString, databaseDirectory);
+var hostBuilder = Host.CreateDefaultBuilder(args)
+    .UseServiceProviderFactory(new AutofacServiceProviderFactory())
+    .ConfigureServices((context, services) =>
+    {
+        var ingestSection = context.Configuration.GetSection(IngestOptions.SectionName);
+        var configuredConnectionString = ingestSection["ConnectionString"] ?? "Data Source=ingest.db";
+        var projectDirectory = FindProjectDirectory();
+        var databaseDirectory = Path.Combine(projectDirectory, "Infastructure", "database");
+        var connectionString = NormalizeSqliteConnectionString(configuredConnectionString, databaseDirectory);
 
-builder.Services.Configure<IngestOptions>(ingestSection);
-builder.Services.AddScoped<TransactionAuditSaveChangesInterceptor>();
-builder.Services.AddDbContext<IngestDbContext>((sp, o) =>
-{
-    o.UseSqlite(connectionString);
-    o.AddInterceptors(sp.GetRequiredService<TransactionAuditSaveChangesInterceptor>());
-});
+        services.Configure<IngestOptions>(ingestSection);
+        services.AddScoped<TransactionAuditSaveChangesInterceptor>();
+        services.AddDbContext<IngestDbContext>((sp, o) =>
+        {
+            o.UseSqlite(connectionString);
+            o.AddInterceptors(sp.GetRequiredService<TransactionAuditSaveChangesInterceptor>());
+        });
 
-builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
-builder.Services.AddHttpClient<ITransactionFeed, HttpTransactionFeed>();
-builder.Services.AddScoped<IngestService>();
-builder.Services.AddSingleton<ICommand, ReconcileCommand>();
-builder.Services.AddScoped<ICommandHandler<ReconcileCommand>, ReconcileCommandHandler>();
-builder.Services.AddSingleton<CommandDispatcher>();
-builder.Services.AddHostedService<HourlyBackgroundService>();
+        services.AddHttpClient<ITransactionFeed, HttpTransactionFeed>();
+        services.AddHostedService<HourlyBackgroundService>();
+    })
+    .ConfigureContainer<ContainerBuilder>(container =>
+    {
+        container.RegisterType<TransactionRepository>()
+            .As<ITransactionRepository>()
+            .InstancePerLifetimeScope();
 
-var host = builder.Build();
+        container.RegisterType<IngestService>()
+            .InstancePerLifetimeScope();
+
+        container.RegisterType<ReconcileCommand>()
+            .As<ICommand>()
+            .SingleInstance();
+
+        container.RegisterType<ReconcileCommandHandler>()
+            .As<ICommandHandler<ReconcileCommand>>()
+            .InstancePerLifetimeScope();
+
+        container.RegisterGenericDecorator(
+            typeof(DatabaseTransactionDecorator<>),
+            typeof(ICommandHandler<>));
+
+        container.RegisterType<CommandDispatcher>()
+            .SingleInstance();
+    });
+
+var host = hostBuilder.Build();
 
 using (var scope = host.Services.CreateScope())
 {

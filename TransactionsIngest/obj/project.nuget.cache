@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "e+NQAyizh6o=",
+  "dgSpecHash": "IoBuJZTEO6g=",
   "success": true,
   "projectFilePath": "/Users/williamsbotchway/Desktop/iowa-city/TransactionsIngest/TransactionsIngest.csproj",
   "expectedPackageFiles": [
+    "/Users/williamsbotchway/.nuget/packages/autofac/8.1.0/autofac.8.1.0.nupkg.sha512",
+    "/Users/williamsbotchway/.nuget/packages/autofac.extensions.dependencyinjection/10.0.0/autofac.extensions.dependencyinjection.10.0.0.nupkg.sha512",
     "/Users/williamsbotchway/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
     "/Users/williamsbotchway/.nuget/packages/microsoft.build/17.7.2/microsoft.build.17.7.2.nupkg.sha512",
     "/Users/williamsbotchway/.nuget/packages/microsoft.build.framework/17.14.28/microsoft.build.framework.17.14.28.nupkg.sha512",
