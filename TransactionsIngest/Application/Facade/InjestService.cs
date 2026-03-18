@@ -52,7 +52,7 @@ public sealed class IngestService
     {
         foreach (var entity in existing)
         {
-            if (entity.Status == TransactionStatus.Finalized || entity.TransactionTimeUtc < cutoffUtc)
+            if (entity.Status == TransactionStatus.Finalized || entity.TransactionTimeUtc >= cutoffUtc)
             {
                 continue;
             }

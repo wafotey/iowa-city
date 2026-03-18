@@ -1,59 +1,61 @@
-# Iowa City – Transactions Ingest & Test API
+# Iowa City - Transactions Ingest and Transactions API
 
-Two .NET 10 projects:
+This solution contains two .NET 10 projects:
 
-1. **TransactionsIngest** – Console app that ingests a last-24h transaction snapshot (per Specification.pdf): upsert by `TransactionId`, record changes, revoke missing transactions, optional finalization, idempotent runs with SQLite + EF Core.
-2. **TransactionsApi** – Minimal Web API that exposes `GET /transactions` returning sample JSON for testing the ingest app.
+1. TransactionsApi
+2. TransactionsIngest
 
-## Build & run
+For full assignment context and acceptance details, see Specification.pdf at the repository root.
+
+## Run Order (Important)
+
+1. Run TransactionsApi first.
+2. Next run TransactionsIngest.
+
+### Commands
 
 ```bash
-# Restore (requires network)
 dotnet restore
-
-# Build
 dotnet build
 
-# Run ingest (uses mock file by default)
-cd TransactionsIngest && dotnet run
+# terminal 1
+cd TransactionsApi
+dotnet run
 
-# Run test API (then point ingest at it by setting UseMockFeed: false and ApiUrl)
-cd TransactionsApi && dotnet run
+# terminal 2
+cd TransactionsIngest
+dotnet run
 ```
 
-## Configuration (TransactionsIngest)
+## Database
 
-Edit `TransactionsIngest/appsettings.json`:
+The project uses SQLite.
 
-- **UseMockFeed**: `true` = read from `mock-transactions.json`; `false` = HTTP GET from **ApiUrl**.
-- **MockFeedPath**: path to JSON file (default `mock-transactions.json`).
-- **ApiUrl**: URL for snapshot (e.g. `http://localhost:5000/transactions` when using TransactionsApi).
-- **ConnectionString**: SQLite DB (default `Data Source=ingest.db`).
+The SQLite database is created on startup in:
 
-## Testing ingest with the API
+- TransactionsIngest/Infastructure/database
 
-1. Start TransactionsApi: `cd TransactionsApi && dotnet run`
-2. In `TransactionsIngest/appsettings.json` set `"UseMockFeed": false` and `"ApiUrl": "http://localhost:PORT/transactions"` (use the port shown by the API).
-3. Run ingest: `cd TransactionsIngest && dotnet run`
+## Architecture and Design Patterns
 
-## Automated tests
+The project demonstrates the following patterns:
 
-```bash
-dotnet test
-```
+1. Command pattern
+   - A ReconcileCommand is dispatched to start processing transactions.
 
-Tests cover: insert of new transactions, update detection and audit, revocation when missing from snapshot, idempotency (repeated run with same input).
+2. Facade pattern
+   - IngestService is a facade over the repository layer and provides a single abstraction for transaction processing workflows.
 
-## Approach (TransactionsIngest)
+3. Decorator pattern
+   - DatabaseTransactionDecorator persists command results by calling SaveChangesAsync in one centralized place.
+   - This avoids injecting DbContext everywhere and keeps persistence concerns clean and consistent whenever a command is run.
 
-- Single run per execution; each run is wrapped in one DB transaction for idempotency.
-- Snapshot is fetched from mock file or HTTP; all records are upserted by `TransactionId`. Changes are detected and written to `TransactionAudits` (change type + changed fields).
-- Any existing transaction in the 24h window that is not in the current snapshot is marked **Revoked** and audited.
-- Records older than 24 hours can be marked **Finalized** and are not updated afterward.
-- Card number is stored as last-4 only (`CardLast4`).
+4. Repository pattern
+   - Repository abstractions sit on top of DbContext and isolate data access concerns from higher-level orchestration logic.
 
-## Assumptions
+## Disclaimer
 
-- API returns UTC timestamps; non-UTC are converted to UTC.
-- String fields are truncated to 20 chars (except `CardLast4`, 4).
-- 24-hour window is based on `DateTime.UtcNow.AddHours(-24)`.
+Although this approach is overkill for a small sample, it is meant for demonstration only.
+
+## Effort
+
+The project took close to 3 hours of effort.
