@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "2yy0hji8VFI=",
+  "success": true,
+  "projectFilePath": "/Users/williamsbotchway/Desktop/iowa-city/TransactionsApi/TransactionsApi.csproj",
+  "expectedPackageFiles": [
+    "/Users/williamsbotchway/.nuget/packages/microsoft.aspnetcore.openapi/10.0.0/microsoft.aspnetcore.openapi.10.0.0.nupkg.sha512",
+    "/Users/williamsbotchway/.nuget/packages/microsoft.openapi/2.0.0/microsoft.openapi.2.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
