@@ -212,3 +212,6 @@
 /Users/williamsbotchway/Desktop/iowa-city/TransactionsIngest.Tests/obj/Debug/net10.0/TransactionsIngest.Tests.pdb
 /Users/williamsbotchway/Desktop/iowa-city/TransactionsIngest.Tests/obj/Debug/net10.0/TransactionsIngest.Tests.genruntimeconfig.cache
 /Users/williamsbotchway/Desktop/iowa-city/TransactionsIngest.Tests/obj/Debug/net10.0/ref/TransactionsIngest.Tests.dll
+/Users/williamsbotchway/Desktop/iowa-city/TransactionsIngest.Tests/bin/Debug/net10.0/Autofac.dll
+/Users/williamsbotchway/Desktop/iowa-city/TransactionsIngest.Tests/bin/Debug/net10.0/Autofac.Extensions.DependencyInjection.dll
+/Users/williamsbotchway/Desktop/iowa-city/TransactionsIngest.Tests/obj/Debug/net10.0/TransactionsIngest.Tests.sourcelink.json

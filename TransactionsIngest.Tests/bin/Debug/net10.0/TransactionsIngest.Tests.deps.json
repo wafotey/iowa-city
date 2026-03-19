@@ -17,6 +17,26 @@
           "TransactionsIngest.Tests.dll": {}
         }
       },
+      "Autofac/8.1.0": {
+        "runtime": {
+          "lib/net8.0/Autofac.dll": {
+            "assemblyVersion": "8.1.0.0",
+            "fileVersion": "8.1.0.0"
+          }
+        }
+      },
+      "Autofac.Extensions.DependencyInjection/10.0.0": {
+        "dependencies": {
+          "Autofac": "8.1.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "10.0.0"
+        },
+        "runtime": {
+          "lib/net8.0/Autofac.Extensions.DependencyInjection.dll": {
+            "assemblyVersion": "10.0.0.0",
+            "fileVersion": "10.0.0.0"
+          }
+        }
+      },
       "Microsoft.CodeCoverage/17.14.1": {
         "runtime": {
           "lib/net8.0/Microsoft.VisualStudio.CodeCoverage.Shim.dll": {
@@ -990,6 +1010,7 @@
       },
       "TransactionsIngest/1.0.0": {
         "dependencies": {
+          "Autofac.Extensions.DependencyInjection": "10.0.0",
           "Microsoft.EntityFrameworkCore.Sqlite": "10.0.0",
           "Microsoft.Extensions.Configuration": "10.0.0",
           "Microsoft.Extensions.Configuration.Binder": "10.0.0",
@@ -1012,6 +1033,20 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "Autofac/8.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-O2QT+0DSTBR2Ojpacmcj3L0KrnnXTFrwLl/OW1lBUDiHhb89msHEHNhTA8AlK3jdFiAfMbAYyQaJVvRe6oSBcQ==",
+      "path": "autofac/8.1.0",
+      "hashPath": "autofac.8.1.0.nupkg.sha512"
+    },
+    "Autofac.Extensions.DependencyInjection/10.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ZjR/onUlP7BzQ7VBBigQepWLAyAzi3VRGX3pP6sBqkPRiT61fsTZqbTpRUKxo30TMgbs1o3y6bpLbETix4SJog==",
+      "path": "autofac.extensions.dependencyinjection/10.0.0",
+      "hashPath": "autofac.extensions.dependencyinjection.10.0.0.nupkg.sha512"
     },
     "Microsoft.CodeCoverage/17.14.1": {
       "type": "package",

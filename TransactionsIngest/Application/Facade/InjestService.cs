@@ -23,7 +23,7 @@ public sealed class IngestService
         var existing = await GetCurrentSnapshotAsync(cutoffUtc, cancellationToken);
 
         DetectChangesInTransactions(snapshot, existing);
-        RevokeMissingFromSnapshot(existing.Values, cutoffUtc);
+        RevokeMissingFromSnapshot(existing, snapshot);
         await FinalizeTransactionOlderThan24HoursAsync(cutoffUtc, cancellationToken);
     }
 
@@ -48,16 +48,13 @@ public sealed class IngestService
         }
     }
 
-    public static void RevokeMissingFromSnapshot(IEnumerable<Transaction> existing, DateTime cutoffUtc)
-    {
-        foreach (var entity in existing)
-        {
-            if (entity.Status == TransactionStatus.Finalized || entity.TransactionTimeUtc >= cutoffUtc)
-            {
-                continue;
-            }
+  
 
-            Revoke(entity);
+    public static void RevokeMissingFromSnapshot(Dictionary<int, Transaction> existing, Dictionary<int, TransactionRecord> snapshot)
+    {
+        foreach (var entity in existing.Where(entity => !snapshot.ContainsKey(entity.Key)))
+        {
+            Revoke(entity.Value);
         }
     }
 
