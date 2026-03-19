@@ -24,7 +24,7 @@ public sealed class TransactionRepository : ITransactionRepository
         DateTime cutoffUtc,
         CancellationToken cancellationToken = default)
         => _dbContext.Transactions
-            .Where(t => t.TransactionTimeUtc >= cutoffUtc)
+            .Where(t => t.CreatedAtUtc >= cutoffUtc)
             .ToDictionaryAsync(t => t.TransactionId, t => t, cancellationToken);
 
     public Task<List<Transaction>> GetTransactionsEligibleForFinalizationAsync(

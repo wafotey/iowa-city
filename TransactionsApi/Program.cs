@@ -11,8 +11,6 @@ if (app.Environment.IsDevelopment())
 var aspNetCoreUrls = builder.Configuration["ASPNETCORE_URLS"] ?? string.Empty;
 if (aspNetCoreUrls.Contains("https://", StringComparison.OrdinalIgnoreCase))
     app.UseHttpsRedirection();
-
-const int totalTransactions = 5;
 var locations = new[] { "STO-01", "STO-02", "STO-03", "STO-04", "WEB-01" };
 var products = new[]
 {
@@ -26,7 +24,7 @@ var products = new[]
     "Desk Mat"
 };
 
-var sampleTransactions = SeedTransactions(totalTransactions, locations, products);
+var sampleTransactions = SeedTransactions(locations, products);
 
 app.MapGet("/transactions", () =>
     {
@@ -41,14 +39,15 @@ app.MapGet("/", () => Results.Redirect("/openapi/v1.json"))
 
 await app.RunAsync();
 
-static List<TransactionDto> SeedTransactions(int count, string[] locations, string[] products)
+static List<TransactionDto> SeedTransactions(string[] locations, string[] products)
 {
+    int count = Random.Shared.Next(5, 11);
     var list = new List<TransactionDto>(capacity: count);
     for (var i = 0; i < count; i++)
     {
         list.Add(new TransactionDto
         {
-            TransactionId = 1001 + i,
+            TransactionId = 1001 + i, 
             CardNumber = RandomCardNumber(),
             LocationCode = locations[Random.Shared.Next(locations.Length)],
             ProductName = products[Random.Shared.Next(products.Length)],

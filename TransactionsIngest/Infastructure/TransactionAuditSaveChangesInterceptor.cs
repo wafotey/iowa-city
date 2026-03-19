@@ -8,6 +8,7 @@ namespace TransactionsIngest.Data.Interceptors;
 public sealed class TransactionAuditSaveChangesInterceptor : SaveChangesInterceptor
 {
     private const string RevisionPropertyName = "Revision";
+    private const string CreatedAtUtcPropertyName = nameof(Transaction.CreatedAtUtc);
     private const string UpdatedAtUtcPropertyName = nameof(Transaction.UpdatedAtUtc);
     private const string TransactionEntityIdPropertyName = nameof(TransactionAudit.TransactionEntityId);
     private const string InsertChangeType = "Insert";
@@ -69,6 +70,10 @@ public sealed class TransactionAuditSaveChangesInterceptor : SaveChangesIntercep
 
     private static void StampCommonPersistenceFields(EntityEntry entry, DateTime nowUtc)
     {
+        var createdAt = entry.Properties.FirstOrDefault(p => p.Metadata.Name == CreatedAtUtcPropertyName);
+        if (entry.State == EntityState.Added && createdAt is not null)
+            createdAt.CurrentValue = nowUtc;
+
         var updatedAt = entry.Properties.FirstOrDefault(p => p.Metadata.Name == UpdatedAtUtcPropertyName);
         if (updatedAt is not null)
             updatedAt.CurrentValue = nowUtc;
